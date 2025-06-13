@@ -1,0 +1,117 @@
+# services:
+#   authwebapi:
+#     image: ${DOCKER_REGISTRY-}authwebapi
+#     container_name: Authwebapi.Api
+#     build:
+#       context: .
+#       dockerfile: Authwebapi/Dockerfile
+#     depends_on:
+#       - authwebapi.postgres
+#     ports:
+#       - 5000:8080
+#       - 5001:8081
+  
+#   authwebapi.postgres:
+#     image: postgres:latest
+#     container_name: Authwebapi.PostgreSql
+#     environment:
+#       - POSTGRES_DB=authconnect
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=postgres
+#     volumes:
+#       - ./.containers/db:/var/lib/postgresql/data
+#     ports:
+#       - 5432:5432
+    
+# version: "3.9"
+# services:
+#   Product Service
+#   productapi:
+#     image: ${DOCKER_REGISTRY-}productapi
+#     container_name: ProductService
+#     build:
+#       context: .
+#       dockerfile: ProductAPI/Dockerfile
+#     depends_on:
+#       - product.postgres
+#     ports:
+#       - 5002:8080  Changed from 5000 to avoid conflict
+#       - 5003:8081  Changed from 5001
+
+#   product.postgres:
+#     image: postgres:latest
+#     container_name: product.PostgreSql
+#     environment:
+#       - POSTGRES_DB=productconnect
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=postgres
+#     volumes:
+#       - ./.containers/product-db:/var/lib/postgresql/data
+#     ports:
+#       - 5434:5432  Changed to avoid conflict with auth DB
+
+#   Auth Service
+#   authwebapi:
+#     image: ${DOCKER_REGISTRY-}authwebapi
+#     container_name: OnyxApplication
+#     build:
+#       context: .
+#       dockerfile: AuthWebAPI/Dockerfile
+#     depends_on:
+#       - auth.postgres
+#     ports:
+#       - 5000:8080  Default port
+#       - 5001:8081  Default port
+
+#   auth.postgres:
+#     image: postgres:latest
+#     container_name: auth.PostgreSql
+#     environment:
+#       - POSTGRES_DB=authconnect
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=postgres
+#     volumes:
+#       - ./.containers/auth-db:/var/lib/postgresql/data
+#     ports:
+#       - 5432:5432  Default port
+
+version: '3.8'
+
+services:
+  authwebapi:
+    container_name: authwebapi.api
+    build:
+      context: .
+      dockerfile: Authwebapi/Dockerfile
+    image: ${DOCKER_REGISTRY:-}authwebapi
+    depends_on:
+      - postgres
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=authconnect;Username=postgres;Password=postgres
+    networks:
+      - backend
+
+  postgres:
+    container_name: authwebapi.postgres
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: authconnect
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  auth_postgres_data:
+
+networks:
+  backend:

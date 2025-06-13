@@ -1,0 +1,65 @@
+# services:
+#   productapi:
+#     image: ${DOCKER_REGISTRY-}productapi
+#     container_name: ProductService
+#     build:
+#       context: .
+#       dockerfile: ProductAPI/Dockerfile
+#     depends_on:
+#       - product.postgres
+#     ports:
+#       - 5000:8080
+#       - 5001:8081
+  
+#   product.postgres:
+#     image: postgres:latest
+#     container_name: product.PostgreSql
+#     environment:
+#       - POSTGRES_DB=productconnect
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=postgres
+#     volumes:
+#       - ./.containers/db:/var/lib/postgresql/data
+#     ports:
+#       - 5434:5432
+    
+version: '3.8'
+
+services:
+  productapi:
+    container_name: product.api
+    build:
+      context: .
+      dockerfile: ProductAPI/Dockerfile
+    image: ${DOCKER_REGISTRY:-}productapi
+    depends_on:
+      - productdb
+    ports:
+      - "5002:8080"   # Product API HTTP
+      - "5003:8081"   # Product API gRPC or alternate
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=productdb;Port=5432;Database=productconnect;Username=postgres;Password=postgres
+    networks:
+      - backend
+
+  productdb:
+    container_name: product.postgres
+    image: postgres:15
+    restart: always
+    ports:
+      - "5433:5432"   # Avoid clash with authdb (5432)
+    environment:
+      POSTGRES_DB: productconnect
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - product_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  product_data:
+
+networks:
+  backend:

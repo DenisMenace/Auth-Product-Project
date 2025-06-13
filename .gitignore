@@ -1,0 +1,9 @@
+bin/
+**/bin/
+**/.containers/
+**/.vs/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
