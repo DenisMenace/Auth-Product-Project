@@ -20,7 +20,16 @@ namespace Application.Products.Queries.GetAllProductsQuery
 
         public async Task<List<Product>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            List<Product> products = await _unitOfWork.ProductRepository.Get().ToListAsync();
+            _logger.LogInformation("Handling GetAllProductsQuery.");
+
+            List<Product> products = await _unitOfWork.ProductRepository.GetAllAsync();
+
+            _logger.LogInformation("Retrieved {Count} products from the database.", products.Count);
+
+            if (products.Count == 0)
+            {
+                _logger.LogWarning("No products found in the database.");
+            }
 
             return products;
         }

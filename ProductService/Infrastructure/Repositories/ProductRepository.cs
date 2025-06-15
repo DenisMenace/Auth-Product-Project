@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -12,12 +13,27 @@ namespace Infrastructure.Repositories
         }
         public void Add(Product product)
         {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
             _dbContext.Products.Add(product);
         }
 
-        public IQueryable<Product> Get()
+        public async Task<List<Product>> GetAllAsync()
         {
-            return _dbContext.Products;
+            return await _dbContext.Products.ToListAsync();
+        }
+
+        public async Task<List<Product>> GetByColourAsync(string colour)
+        {
+            if (string.IsNullOrWhiteSpace(colour))
+            {
+                throw new ArgumentException("Colour must be provided", nameof(colour));
+            }
+
+            return await _dbContext.Products.Where(p => p.Colour == colour).ToListAsync();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Application.Products.Queries.GetProductByColourQuery
     {
         public GetProductByColourValidator()
         {
-            RuleFor(x => x.Colour).NotEmpty();
+            RuleFor(x => x.Colour).NotEmpty().WithMessage("Colour must be provided");
         }
     }
 }

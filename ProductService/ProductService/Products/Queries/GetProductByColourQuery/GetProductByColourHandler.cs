@@ -20,13 +20,11 @@ namespace Application.Products.Queries.GetProductByColourQuery
 
         public async Task<List<Product>> Handle(GetProductByColourQuery request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(request.Colour))
-            {
-                _logger.LogWarning("Colour was empty.");
-                throw new ArgumentException("Colour must not be null or empty");
-            }
+            _logger.LogInformation("Handling GetProductByColourQuery for Colour: {Colour}", request.Colour);
 
-            List<Product> products = await _unitOfWork.ProductRepository.Get().Where(p => p.Colour == request.Colour).ToListAsync(); 
+            List<Product> products = await _unitOfWork.ProductRepository.GetByColourAsync(request.Colour);
+
+            _logger.LogInformation("Retrieved {Count} products for Colour: {Colour}", products.Count, request.Colour);
 
             return products;
         }

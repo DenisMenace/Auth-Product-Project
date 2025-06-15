@@ -18,6 +18,8 @@ namespace Application.Products.Commands.InsertProduct
 
         public async Task<string> Handle(InsertProductCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Handling InsertProductCommand for Name: {Name}, Colour: {Colour}", request.Name, request.Colour);
+
             var product = new Product
             {
                 Id = Guid.NewGuid(),
@@ -27,7 +29,7 @@ namespace Application.Products.Commands.InsertProduct
 
             _unitOfWork.ProductRepository.Add(product);
 
-            var result = await _unitOfWork.SaveChangesAsync();
+            var result = await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             if (result == 0)
             {

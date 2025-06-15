@@ -4,7 +4,10 @@ namespace Domain.Contracts
 {
     public interface IProductRepository
     {
-        IQueryable<Product> Get();
+        Task<List<Product>> GetAllAsync();
+
+        Task<List<Product>> GetByColourAsync(string colour);
+
         void Add(Product product);
     }
 }
