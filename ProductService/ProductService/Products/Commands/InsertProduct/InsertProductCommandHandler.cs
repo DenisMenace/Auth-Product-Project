@@ -18,14 +18,6 @@ namespace Application.Products.Commands.InsertProduct
 
         public async Task<string> Handle(InsertProductCommand request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Colour))
-            {
-                _logger.LogWarning("Failed to create a product: Name or colour of the product was empty.");
-                throw new ArgumentException("Product name or colour must not be null or empty");
-            }
-
-            var productRepository = _unitOfWork.ProductRepository;
-
             var product = new Product
             {
                 Id = Guid.NewGuid(),
@@ -33,7 +25,7 @@ namespace Application.Products.Commands.InsertProduct
                 Colour = request.Colour
             };
 
-            productRepository.Add(product);
+            _unitOfWork.ProductRepository.Add(product);
 
             var result = await _unitOfWork.SaveChangesAsync();
 

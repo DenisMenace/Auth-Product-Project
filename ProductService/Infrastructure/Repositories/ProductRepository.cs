@@ -5,14 +5,14 @@ namespace Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly ProductServiceDbContext _dbContext;
-        public ProductRepository(ProductServiceDbContext dbContext)
+        private readonly IDbContext _dbContext;
+        public ProductRepository(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
         public void Add(Product product)
         {
-            _dbContext.Set<Product>().Add(product);
+            _dbContext.Products.Add(product);
         }
 
         public IQueryable<Product> Get()

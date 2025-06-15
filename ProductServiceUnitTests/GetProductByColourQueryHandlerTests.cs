@@ -101,7 +101,7 @@ public class FakeProductRepository : IProductRepository
 
     public IQueryable<Product> Get()
     {
-        return _context.Products.AsQueryable();
+        return _context.Products;//.AsQueryable();
     }
 
     public async Task SaveAsync()

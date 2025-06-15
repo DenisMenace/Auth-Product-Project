@@ -5,8 +5,8 @@ namespace Infrastructure
     public sealed class UnitOfWork : IUnitOfWork
     {
         private readonly IProductRepository _productRepository;
-        private readonly ProductServiceDbContext _dbContext;
-        public UnitOfWork(IProductRepository productRepository, ProductServiceDbContext dbContext)
+        private readonly IDbContext _dbContext;
+        public UnitOfWork(IProductRepository productRepository, IDbContext dbContext)
         {
             _productRepository = productRepository;
             _dbContext = dbContext;
